@@ -25,7 +25,8 @@ extern {
     // variadic function test
     fn variadictest(x: i32, ...) -> i32;
     // "nullable pointer optimization", e.g. Option Some/None
-
+    fn register_npocb(cb: fn(Option<fn(i32)>, Option<i32>));
+    fn call_npocb();
 }
 
 
@@ -50,6 +51,7 @@ fn main() {
     globalrustcallback(); 
     objectrustcallback();
     variadic();
+    nullptroptimization();
     println!("end ffi experiment");
 }
 
@@ -112,5 +114,23 @@ fn variadic() {
         println!("first test got {}", m);
         let n = variadictest(4, 10, 11, 12, 13);
         println!("second test got {}", n);
+    }
+}
+
+fn npocb_cb(op: Option<fn(i32)>, i: Option<i32>) {
+    match op {
+        Some(f) => match i {
+            Some(ii) => { println!("executing fxn with arg!"); f(ii) },
+            None => println!("have fxn, no arg"),
+        },
+        None    => println!("no fxn provided"),
+    }
+}
+
+fn nullptroptimization() {
+    // you can use optional to deal with NULLed stuff
+    unsafe {
+        register_npocb(npocb_cb);
+        call_npocb();
     }
 }

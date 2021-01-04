@@ -6,6 +6,7 @@ extern int globaltest = 47;
 rustcb globalcb = NULL;
 rustobjcb objcb = NULL;
 void * objptrforcb = NULL;
+rustnpocb npocb = NULL;
 
 void printsomething() {
     printf("print something\n");
@@ -55,4 +56,12 @@ int variadictest(int count, ...) {
     }
     va_end(varargs);
     return sum;
+}
+
+void register_npocb(rustnpocb cb) {
+    npocb = cb;
+}
+
+void call_npocb(int i) {
+    npocb(NULL, i);
 }
