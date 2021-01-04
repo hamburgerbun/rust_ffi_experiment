@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdarg.h>
 #include "libdumb.h" 
 
 extern int globaltest = 47;
@@ -42,4 +43,16 @@ void register_objcb(void * objptr, rustobjcb cb) {
 
 void call_objcb() {
     objcb(objptrforcb, 101);
+}
+
+int variadictest(int count, ...) {
+    va_list varargs;
+    int i, sum;
+    va_start(varargs, count);
+    sum = 0;
+    for (i = 0; i < count; i++) {
+        sum += va_arg(varargs, int);
+    }
+    va_end(varargs);
+    return sum;
 }

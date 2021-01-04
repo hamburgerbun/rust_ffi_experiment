@@ -8,3 +8,4 @@ int32_t register_cb(rustcb cb);
 void call_cb();
 void register_objcb(void * objptr, rustobjcb cb);
 void call_objcb();
+int variadictest(int count, ...);

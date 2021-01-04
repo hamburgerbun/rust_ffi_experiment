@@ -16,11 +16,16 @@ extern {
     // a static variable we want to mess with
     static mut globaltest: i32;
     // TODO: fn that returns something
+    // global callback support
     fn register_cb(cb: extern fn(i32)) -> i32;
     fn call_cb();
-    // TODO: fn that does callback on a specific object 
+    // targeted callback support using void pointers
     fn register_objcb(target: *mut DummyObj, cb: extern fn(*mut DummyObj, i32) -> i32);
     fn call_objcb();
+    // variadic function test
+    fn variadictest(x: i32, ...) -> i32;
+    // "nullable pointer optimization", e.g. Option Some/None
+
 }
 
 
@@ -44,6 +49,7 @@ fn main() {
     globalvaluetest();
     globalrustcallback(); 
     objectrustcallback();
+    variadic();
     println!("end ffi experiment");
 }
 
@@ -98,4 +104,13 @@ fn objectrustcallback() {
         call_objcb();
     }
     println!("objectrustcallback end");
+}
+
+fn variadic() {
+    unsafe {
+        let m = variadictest(3, 1, 2, 3, 9);
+        println!("first test got {}", m);
+        let n = variadictest(4, 10, 11, 12, 13);
+        println!("second test got {}", n);
+    }
 }
