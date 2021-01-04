@@ -1,5 +1,10 @@
 extern crate libc;
 
+#[repr(C)]
+struct DummyObj {
+    a: i32,
+}
+
 #[link(name = "dumb", kind = "static")]
 extern {
     // no inputs
@@ -11,10 +16,20 @@ extern {
     // a static variable we want to mess with
     static mut globaltest: i32;
     // TODO: fn that returns something
-    // TODO: fn that does global call back
     fn register_cb(cb: extern fn(i32)) -> i32;
     fn call_cb();
     // TODO: fn that does callback on a specific object 
+    fn register_objcb(target: *mut DummyObj, cb: extern fn(*mut DummyObj, i32) -> i32);
+    fn call_objcb();
+}
+
+
+extern "C" fn objcallback(target: *mut DummyObj, a: i32) -> i32 {
+    println!("called from co to update a thing to {}", a);
+    unsafe {
+        (*target).a = a;
+    }
+    a
 }
 
 extern fn globalcallback(a: i32) {
@@ -73,4 +88,14 @@ fn globalrustcallback() {
         call_cb();
     }
     println!("globalcallback stuff end");
+}
+
+fn objectrustcallback() {
+    println!("objectrustcallback start");
+    let mut dummyobj = Box::new(DummyObj{a: 0i32});
+    unsafe {
+        register_objcb(&mut *dummyobj, objcallback);
+        call_objcb();
+    }
+    println!("objectrustcallback end");
 }

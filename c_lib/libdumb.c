@@ -3,6 +3,8 @@
 
 extern int globaltest = 47;
 rustcb globalcb = NULL;
+rustobjcb objcb = NULL;
+void * objptrforcb = NULL;
 
 void printsomething() {
     printf("print something\n");
@@ -31,4 +33,13 @@ void call_cb() {
     printf("calling cb\n");
     globalcb(999);
     printf("finished calling\n");
+}
+
+void register_objcb(void * objptr, rustobjcb cb) {
+    objcb = cb;
+    objptrforcb = objptr;
+}
+
+void call_objcb() {
+    objcb(objptrforcb, 101);
 }
