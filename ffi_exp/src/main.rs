@@ -12,19 +12,41 @@ extern {
     static mut globaltest: i32;
     // TODO: fn that returns something
     // TODO: fn that does global call back
+    fn register_cb(cb: extern fn(i32)) -> i32;
+    fn call_cb();
     // TODO: fn that does callback on a specific object 
+}
+
+extern fn globalcallback(a: i32) {
+    println!("lol got called with value {}", a)
 }
 
 fn main() {
     println!("begin ffi experiment");
+    justprint(); 
+    printwithinput();
+    modifyvec(); 
+    globalvaluetest();
+    globalrustcallback(); 
+    objectrustcallback();
+    println!("end ffi experiment");
+}
+
+fn justprint() {
     println!("1. printsomething");
     unsafe {
         printsomething();
     }
+}
+
+fn printwithinput() {
     println!("2. print this");
     unsafe {
         printthis("this was to be printed".as_ptr());
     }
+}
+
+fn modifyvec() {
     println!("3. change the first five ints");
     let mut intvec = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     unsafe {
@@ -33,10 +55,22 @@ fn main() {
     for x in intvec.iter() {
         println!("value {} in vec", x);
     }
+}
+
+fn globalvaluetest() {
     unsafe {
         println!("initial globaltest int value : {}", globaltest);
         globaltest = 99i32;
         println!("new globaltest int value : {}", globaltest);
     }
-    println!("end ffi experiment");
+}
+
+fn globalrustcallback() {
+    println!("globalcallback stuff start");
+    unsafe {
+        let retval = register_cb(globalcallback);
+        println!("retval from register was {}", retval);
+        call_cb();
+    }
+    println!("globalcallback stuff end");
 }
