@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "libdumb.h" 
 
+extern int globaltest = 47;
+
 void printsomething() {
     printf("print something\n");
 }

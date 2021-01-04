@@ -8,6 +8,8 @@ extern {
     fn printthis(input: *const u8);
     // input actually changes
     fn changefirstfive(input: *mut i32);
+    // a static variable we want to mess with
+    static mut globaltest: i32;
     // TODO: fn that returns something
     // TODO: fn that does global call back
     // TODO: fn that does callback on a specific object 
@@ -30,6 +32,11 @@ fn main() {
     }
     for x in intvec.iter() {
         println!("value {} in vec", x);
+    }
+    unsafe {
+        println!("initial globaltest int value : {}", globaltest);
+        globaltest = 99i32;
+        println!("new globaltest int value : {}", globaltest);
     }
     println!("end ffi experiment");
 }
